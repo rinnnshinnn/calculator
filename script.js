@@ -4,6 +4,14 @@ const subtract = (a, b) => a - b;
 const multiply = (a, b) => a * b;
 const divide = (a, b) => b !== 0 ? a / b : "Error"; // Avoid dividing by zero
 
+// Map display operator symbols to actual operators used in calculations
+const operatorMapping = {
+    '÷': '/',
+    '×': '*',
+    '−': '-',
+    '+': '+'
+};
+
 // Operate function to handle basic operations
 const operate = (operator, num1, num2) => {
     const operations = {
@@ -33,11 +41,18 @@ const handleNumberInput = (num) => {
 
 // Handle operator input
 const handleOperatorInput = (op) => {
+    const actualOperator = operatorMapping[op]; // Map display operator to actual operator
+
     if (firstNumber === null) {
         firstNumber = parseFloat(currentInput);
         currentInput = '';
+    } else if (operator) {
+        const result = operate(operator, firstNumber, parseFloat(currentInput));
+        updateDisplay(result);
+        firstNumber = result;
+        currentInput = '';
     }
-    operator = op;
+    operator = actualOperator;
     decimalAdded = false;
 };
 
@@ -96,7 +111,7 @@ document.querySelector('.backspace').addEventListener('click', handleBackspace);
 document.addEventListener('keydown', (event) => {
     const { key } = event;
 
-    if (!isNaN(key)) {
+    if (!isNaN(key) && key !== ' ') {
         handleNumberInput(key);
     } else if (key === '.') {
         handleDecimal();
